@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Repository Browser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #0366d6;
+            cursor: pointer;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Your Repository Browser</h1>
+
+    <ul id="fileList"></ul>
+
+    <script>
+        const owner = 'midnight-ntwrk';
+        const repository = 'releases';
+        const branch = 'gh-pages'; // Change this to the desired branch
+        const targetDirectory = 'artifacts'; // Change this to the desired directory
+        const apiUrl = `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
+
+        const fileList = document.getElementById('fileList');
+
+        function fetchContents(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    fileList.innerHTML = ''; // Clear previous contents
+
+                    data.forEach(item => {
+                        const listItem = document.createElement('li');
+                        const link = document.createElement('a');
+
+                        if (item.type === 'dir') {
+                            // If it's a directory, create a link to fetch its contents
+                            link.textContent = `${item.name}/`;
+                            link.onclick = () => fetchContents(item.url);
+                        } else {
+                            // If it's a file, create a link to view or download the file
+                            link.href = item.download_url;
+                            link.textContent = item.name;
+                        }
+
+                        listItem.appendChild(link);
+                        fileList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching repository contents:', error));
+        }
+
+        // Initial fetch for the "artifacts" directory
+        fetchContents(apiUrl);
+    </script>
+
+</body>
+</html>
