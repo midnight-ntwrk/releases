@@ -1,79 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Repository Browser</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            margin: 5px 0;
-        }
-        a {
-            text-decoration: none;
-            color: #0366d6;
-            cursor: pointer;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Midnight Releases</title>
+  <link rel="icon" href="/images/favicon-32x32.png" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style type="text/css">
+    html {
+      position: relative;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: monospace;
+      font-size: 14px;
+      margin: 0 0 50px;
+    }
+
+    footer {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      width: 100%;
+    }
+
+    a {
+      text-decoration: none;
+      color: #0366d6;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:visited {
+      color: blue;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    li {
+      margin: 1em;
+      padding: 0;
+    }
+  </style>
 </head>
+
 <body>
+  <ul id="fileList"></ul>
 
-    <h1>Your Repository Browser</h1>
+  <script>
+    const owner = "midnight-ntwrk";
+    const repository = "releases";
+    const branch = "gh-pages";
+    const targetDirectory = "artifacts";
+    const apiUrl = `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
 
-    <ul id="fileList"></ul>
+    const fileList = document.getElementById("fileList");
 
-    <script>
-        const owner = 'midnight-ntwrk';
-        const repository = 'releases';
-        const branch = 'gh-pages'; // Change this to the desired branch
-        const targetDirectory = 'artifacts'; // Change this to the desired directory
-        const apiUrl = `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
+    function fetchContents(url) {
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          fileList.innerHTML = "";
 
-        const fileList = document.getElementById('fileList');
+          data.forEach((item) => {
+            const listItem = document.createElement("li");
+            const link = document.createElement("a");
 
-        function fetchContents(url) {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    fileList.innerHTML = ''; // Clear previous contents
+            if (item.type === "dir") {
+              // If it's a directory, create a link to fetch its contents
+              link.textContent = `${item.name}`;
+              link.onclick = () => fetchContents(item.url);
+            } else {
+              // If it's a file, create a link to view or download the file and show its file size
+              link.href = item.download_url;
+              link.textContent = item.name;
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
 
-                    data.forEach(item => {
-                        const listItem = document.createElement('li');
-                        const link = document.createElement('a');
+              const fileSize = document.createElement("span");
+              if (item.size > 1024 * 1024) {
+                fileSize.textContent = ` (${(
+                  item.size /
+                  (1024 * 1024)
+                ).toFixed(2)} MB)`;
+              } else {
+                fileSize.textContent = ` (${(item.size / 1024).toFixed(
+                  2
+                )} KB)`;
+              }
 
-                        if (item.type === 'dir') {
-                            // If it's a directory, create a link to fetch its contents
-                            link.textContent = `${item.name}/`;
-                            link.onclick = () => fetchContents(item.url);
-                        } else {
-                            // If it's a file, create a link to view or download the file
-                            link.href = item.download_url;
-                            link.textContent = item.name;
-                        }
+              link.appendChild(fileSize);
+            }
 
-                        listItem.appendChild(link);
-                        fileList.appendChild(listItem);
-                    });
-                })
-                .catch(error => console.error('Error fetching repository contents:', error));
-        }
+            listItem.appendChild(link);
+            fileList.appendChild(listItem);
+          });
+        })
+        .catch((error) =>
+          console.error("Error fetching repository contents:", error)
+        );
+    }
 
-        // Initial fetch for the "artifacts" directory
-        fetchContents(apiUrl);
-    </script>
-
+    // Initial fetch for the "artifacts" directory
+    fetchContents(apiUrl);
+  </script>
 </body>
+
 </html>
