@@ -90,34 +90,31 @@
                   link.textContent = item.name.replace(".link", ".zip");
                   link.target = "_blank";
                   link.rel = "noopener noreferrer";
+
+                  // Send a HTTP HEAD request to link.href and read the Content-Length header to get the file size
+                  fetch(link.href, {method: "HEAD", mode: "no-cors"})
+                    .then((response) => {
+                      const contentLength =
+                        response.headers.get("Content-Length");
+                      const fileSize = document.createElement("span");
+                      if (contentLength > 1024 * 1024) {
+                        fileSize.textContent = ` (${(
+                          contentLength /
+                          (1024 * 1024)
+                        ).toFixed(2)} MB)`;
+                      } else {
+                        fileSize.textContent = ` (${(
+                          contentLength / 1024
+                        ).toFixed(2)} KB)`;
+                      }
+                      link.appendChild(fileSize);
+                    })
+                    .catch((error) =>
+                      console.error("Error fetching link contents:", error)
+                    );
                 })
                 .catch((error) =>
                   console.error("Error fetching link contents:", error)
-                );
-
-              // Send a HTTP HEAD request to the same location as link.href
-              fetch(link.href, {method: "HEAD"})
-                .then((response) => {
-                  if (response.ok) {
-                    const fileSize = document.createElement("span");
-                    if (
-                      response.headers.get("content-length") >
-                      1024 * 1024
-                    ) {
-                      fileSize.textContent = ` (${(
-                        response.headers.get("content-length") /
-                        (1024 * 1024)
-                      ).toFixed(2)} MB)`;
-                    } else {
-                      fileSize.textContent = ` (${(
-                        response.headers.get("content-length") / 1024
-                      ).toFixed(2)} KB)`;
-                    }
-                    link.appendChild(fileSize);
-                  }
-                })
-                .catch((error) =>
-                  console.error("Error fetching link file size:", error)
                 );
             } else {
               // If it's a file, create a link to view or download the file and show its file size
