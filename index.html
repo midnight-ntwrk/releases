@@ -82,7 +82,7 @@
               link.textContent = `${item.name}`;
               link.onclick = () => fetchContents(item.url);
             } else if (item.name.endsWith(".link")) {
-              // If it's a .link file, use the name of the file as the link text and the file's contents as the link URL
+              // If it's a .link file, the name of the file is the title of the link, the contents are used to build the link, appended to the cloudFrontUrl
               fetch(item.download_url)
                 .then((response) => response.text())
                 .then((data) => {
@@ -95,28 +95,29 @@
                   console.error("Error fetching link contents:", error)
                 );
 
-              // Send a HTTP HEAD request to get the file size
-              fetch(item.download_url, {method: "HEAD"})
+              // Send a HTTP HEAD request to the same location as link.href
+              fetch(link.href, {method: "HEAD"})
                 .then((response) => {
-                  const contentLength =
-                    response.headers.get("content-length");
-                  if (contentLength) {
+                  if (response.ok) {
                     const fileSize = document.createElement("span");
-                    if (contentLength > 1024 * 1024) {
+                    if (
+                      response.headers.get("content-length") >
+                      1024 * 1024
+                    ) {
                       fileSize.textContent = ` (${(
-                        contentLength /
+                        response.headers.get("content-length") /
                         (1024 * 1024)
                       ).toFixed(2)} MB)`;
                     } else {
                       fileSize.textContent = ` (${(
-                        contentLength / 1024
+                        response.headers.get("content-length") / 1024
                       ).toFixed(2)} KB)`;
                     }
                     link.appendChild(fileSize);
                   }
                 })
                 .catch((error) =>
-                  console.error("Error fetching file size:", error)
+                  console.error("Error fetching link file size:", error)
                 );
             } else {
               // If it's a file, create a link to view or download the file and show its file size
