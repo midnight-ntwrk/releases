@@ -67,11 +67,27 @@
 
     const fileList = document.getElementById("fileList");
 
+    const itemUrlStack = [];
+
     function fetchContents(url) {
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
           fileList.innerHTML = "";
+
+          if (itemUrlStack.length) {
+            const listItem = document.createElement("li");
+            const link = document.createElement("a");
+
+            link.textContent = "../";
+            link.onclick = () => {
+              const parentUrl = itemUrlStack.pop();
+              fetchContents(parentUrl);
+            }
+
+            listItem.appendChild(link);
+            fileList.appendChild(listItem);
+          }
 
           data.forEach((item) => {
             const listItem = document.createElement("li");
@@ -80,7 +96,10 @@
             if (item.type === "dir") {
               // If it's a directory, create a link to fetch its contents
               link.textContent = `${item.name}`;
-              link.onclick = () => fetchContents(item.url);
+              link.onclick = () => {
+                itemUrlStack.push(url);
+                fetchContents(item.url);
+              }
             } else if (item.name.endsWith(".link")) {
               // If it's a .link file, the name of the file is the title of the link, the contents are used to build the link, appended to the cloudFrontUrl
               fetch(item.download_url)
