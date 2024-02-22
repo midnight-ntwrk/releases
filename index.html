@@ -67,7 +67,13 @@
 
     const fileList = document.getElementById("fileList");
 
-    const itemUrlStack = [];
+    window.addEventListener("popstate", (event) => fetchContents(event.state ?? apiUrl));
+
+    // 'Deep-linking' is not supported, so when first loaded, if we detect such a path (via the presence of a hash)
+    // redirect to the root.
+    if (window.location.hash) {
+      window.location = `${window.location.pathname}${window.location.search}`;
+    }
 
     function fetchContents(url) {
       fetch(url)
@@ -75,14 +81,13 @@
         .then((data) => {
           fileList.innerHTML = "";
 
-          if (itemUrlStack.length) {
+          if (history.state) {
             const listItem = document.createElement("li");
             const link = document.createElement("a");
 
             link.textContent = "../";
             link.onclick = () => {
-              const parentUrl = itemUrlStack.pop();
-              fetchContents(parentUrl);
+              history.back();
             }
 
             listItem.appendChild(link);
@@ -97,7 +102,7 @@
               // If it's a directory, create a link to fetch its contents
               link.textContent = `${item.name}`;
               link.onclick = () => {
-                itemUrlStack.push(url);
+                history.pushState(item.url, "", `${window.location}${window.location.hash ? '/' : '#/'}${item.name}`);
                 fetchContents(item.url);
               }
             } else if (item.name.endsWith(".link")) {
