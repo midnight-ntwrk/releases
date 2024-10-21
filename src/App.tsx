@@ -48,7 +48,10 @@ function App() {
             ) : item.name.endsWith(".link") ? (
               <a
                 className="listStyle"
-                // href={`${cloudFrontUrl}/${item.name.replace(".link", ".zip")}`}
+                href={`s3://dev-releases.midnight.network/${item.name.replace(
+                  ".link",
+                  ".zip"
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
