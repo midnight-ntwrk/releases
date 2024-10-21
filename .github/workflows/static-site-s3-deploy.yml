@@ -42,9 +42,9 @@ jobs:
       - name: Sync build to S3 for PRs
         if: github.event_name == 'pull_request'
         run: |
-          aws s3 sync ./build s3://${{ env.BUCKET_DEV }} --acl public-read
+          aws s3 sync ./build s3://${{ env.BUCKET_DEV }}
 
       - name: Sync build to S3 for Merges
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          aws s3 sync ./build s3://${{ env.BUCKET_PROD }} --acl public-read
+          aws s3 sync ./build s3://${{ env.BUCKET_PROD }}
