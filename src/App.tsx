@@ -41,7 +41,7 @@ function App() {
               <a
                 className="listStyle"
                 href="#"
-                onClick={() => fetchContents(item.url)}
+                // onClick={() => fetchContents(item.url)}
               >
                 {item.name}
               </a>
