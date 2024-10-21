@@ -14,15 +14,15 @@ function App() {
   //   fetchContents(apiUrl);
   // }, []);
 
-  // const fetchContents = async (url: string) => {
-  //   try {
-  //     const response = await fetch(url);
-  //     const data = await response.json();
-  //     setFiles(data);
-  //   } catch (error) {
-  //     console.error("Error fetching repository contents:", error);
-  //   }
-  // };
+  const fetchContents = async (url: string) => {
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setFiles(data);
+    } catch (error) {
+      console.error("Error fetching repository contents:", error);
+    }
+  };
 
   const formatFileSize = (size: number) => {
     return size > 1024 * 1024
@@ -41,7 +41,7 @@ function App() {
               <a
                 className="listStyle"
                 href="#"
-                // onClick={() => fetchContents(item.url)}
+                onClick={() => fetchContents(item.url)}
               >
                 {item.name}
               </a>
