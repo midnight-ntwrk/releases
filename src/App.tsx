@@ -48,10 +48,7 @@ function App() {
             ) : item.name.endsWith(".link") ? (
               <a
                 className="listStyle"
-                href={`s3://dev-releases.midnight.network/${item.name.replace(
-                  ".link",
-                  ".zip"
-                )}`}
+                href={`https://dev-releases.midnight.network/${item.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
