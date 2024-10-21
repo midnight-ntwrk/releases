@@ -1,0 +1,50 @@
+name: Build and Deploy to S3
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: "us-east-1"
+      BUCKET_DEV: "dev-releases.midnight.network"
+      BUCKET_PROD: "releases.midnight.network"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync build to S3 for PRs
+        if: github.event_name == 'pull_request'
+        run: |
+          aws s3 sync ./build s3://${{ env.BUCKET_DEV }} --acl public-read
+
+      - name: Sync build to S3 for Merges
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          aws s3 sync ./build s3://${{ env.BUCKET_PROD }} --acl public-read
