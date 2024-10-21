@@ -3,26 +3,26 @@ import "./App.css";
 
 function App() {
   const [files, setFiles] = useState<any[]>([]);
-  const owner = "midnight-ntwrk";
-  const repository = "releases";
-  const branch = "gh-pages";
-  const targetDirectory = "artifacts";
-  const apiUrl = `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
-  const cloudFrontUrl = "https://d3fazakqrumx6p.cloudfront.net";
+  // const owner = "midnight-ntwrk";
+  // const repository = "releases";
+  // const branch = "gh-pages";
+  // const targetDirectory = "artifacts";
+  // const apiUrl = `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
+  // const cloudFrontUrl = "https://d3fazakqrumx6p.cloudfront.net";
 
-  useEffect(() => {
-    fetchContents(apiUrl);
-  }, []);
+  // useEffect(() => {
+  //   fetchContents(apiUrl);
+  // }, []);
 
-  const fetchContents = async (url: string) => {
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      setFiles(data);
-    } catch (error) {
-      console.error("Error fetching repository contents:", error);
-    }
-  };
+  // const fetchContents = async (url: string) => {
+  //   try {
+  //     const response = await fetch(url);
+  //     const data = await response.json();
+  //     setFiles(data);
+  //   } catch (error) {
+  //     console.error("Error fetching repository contents:", error);
+  //   }
+  // };
 
   const formatFileSize = (size: number) => {
     return size > 1024 * 1024
@@ -48,7 +48,7 @@ function App() {
             ) : item.name.endsWith(".link") ? (
               <a
                 className="listStyle"
-                href={`${cloudFrontUrl}/${item.name.replace(".link", ".zip")}`}
+                // href={`${cloudFrontUrl}/${item.name.replace(".link", ".zip")}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
