@@ -40,7 +40,7 @@ function App() {
             {item.type === "dir" ? (
               <a
                 className="listStyle"
-                href="#"
+                href="https://dev-releases.midnight.network"
                 onClick={() => fetchContents(item.url)}
               >
                 {item.name}
