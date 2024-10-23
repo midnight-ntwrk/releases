@@ -45,6 +45,7 @@ jobs:
           provider: aws
           terragrunt: true
           aws-role: MidnightGithubActionsAdminRole
+          environment: dev
 
       - name: Sync build to S3 for PRs
         if: github.event_name == 'pull_request'
