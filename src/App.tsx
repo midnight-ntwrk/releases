@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 
 function App() {
   const [files, setFiles] = useState<any[]>([]);
-  const owner = "midnight-ntwrk";
-  const repository = "releases";
-  const branch = "gh-pages";
-  const targetDirectory = "artifacts";
-  const apiUrl = `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
-  const cloudFrontUrl = "https://d3fazakqrumx6p.cloudfront.net";
+  // const owner = "midnight-ntwrk";
+  // const repository = "releases";
+  // const branch = "gh-pages";
+  // const targetDirectory = "artifacts";
+  // const apiUrl = `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
+  // const cloudFrontUrl = "https://d3fazakqrumx6p.cloudfront.net";
 
-  useEffect(() => {
-    fetchContents(apiUrl);
-  }, []);
+  // useEffect(() => {
+  //   fetchContents(apiUrl);
+  // }, []);
 
   const fetchContents = async (url: string) => {
     try {
@@ -40,7 +40,7 @@ function App() {
             {item.type === "dir" ? (
               <a
                 className="listStyle"
-                href="#"
+                href="https://dev-releases.midnight.network"
                 onClick={() => fetchContents(item.url)}
               >
                 {item.name}
@@ -48,7 +48,7 @@ function App() {
             ) : item.name.endsWith(".link") ? (
               <a
                 className="listStyle"
-                href={`${cloudFrontUrl}/${item.name.replace(".link", ".zip")}`}
+                href={`https://dev-releases.midnight.network/${item.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
