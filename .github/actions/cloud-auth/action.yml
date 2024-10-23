@@ -1,0 +1,81 @@
+name: Authenticate against a cloud provider
+description: This action configures authentication for cloud environments and platforms (AWS/GCP/GitHub)
+
+inputs:
+  provider:
+    required: true
+    description: (enum) The cloud provider to configure authentication for (aws/gcp/github)
+  environment:
+    required: true
+    description: (enum) The environment to use (dev/prod)
+  aws-region:
+    required: false
+    default: eu-west-1
+    description: (string) AWS region to use
+  aws-role:
+    required: false
+    description: (string) AWS IAM Role to assume
+  gcp-project-id:
+    required: false
+    description: (string) GCP project ID to use
+  gcp-project-num:
+    required: false
+    description: (string) GCP project number to use
+  gcp-service-account:
+    required: false
+    description: (string) GCP service account to use (allowed to use Workload Identity Pool)
+  gcp-region:
+    required: false
+    default: europe-west1
+    description: (string) GCP region to use
+  github-token:
+    required: false
+    description: (string) GitHub token to use
+  github-deploy-env:
+    required: false
+    default: "github/midnight-ntwrk"
+    description: (string) GitHub environment to use
+
+# NOTE: With all providers, we assume we can always find details in `<target>/account.hcl`
+# This is used in {{ env.account-file }}
+runs:
+  using: composite
+
+  steps:
+
+    ########################
+    ### Provider: GitHub ###
+    ########################
+    - name: Setup Github Provider
+      if: contains(inputs.provider, 'github')
+      id: get-github
+      shell: bash
+      run: |
+        echo "GITHUB_ORG_TOKEN=${{ inputs.github-token }}" >> "$GITHUB_ENV"
+        echo "Configured Github credentials [${{ inputs.github-deploy-env }}, ..${GITHUB_ORG_TOKEN: -4}]"
+
+    #####################
+    ### Provider: AWS ###
+    #####################
+    - name: AWS - Determine account
+      if: contains(inputs.provider, 'aws')
+      id: get-aws
+      shell: bash
+      run: |
+        if [ "${{ inputs.environment }}" = "dev" ]; then
+          export AWS_ID=596662952274
+        elif [ "${{ inputs.environment }}" = "prod" ]; then
+          export AWS_ID=851725512700
+        else
+          echo "Invalid environment specified: ${{ inputs.environment }}"
+          exit 1
+        fi
+        echo "Using AWS account ID for ${{ inputs.environment }}: ${AWS_ID}"
+        echo "aws-account-id=${AWS_ID}" >> $GITHUB_OUTPUT
+
+    - name: AWS - Configure credentials
+      if: contains(inputs.provider, 'aws')
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::${{ steps.get-aws.outputs.aws-account-id }}:role/${{ inputs.aws-role }}
+        aws-region: ${{ inputs.aws-region }}
