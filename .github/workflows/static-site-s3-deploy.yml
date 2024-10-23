@@ -12,6 +12,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: true
+
     env:
       AWS_REGION: "eu-west-1"
       BUCKET_DEV: "releases.dev.midnight.network"
