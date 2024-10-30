@@ -40,7 +40,7 @@ jobs:
         with:
           provider: aws
           terragrunt: true
-          aws-role: MidnightGithubActionsAdminPublicRole
+          aws-role: MidnightGithubActionsAdminReleasesPublicRole
           environment: dev
 
       - name: Sync build to S3 for PRs
