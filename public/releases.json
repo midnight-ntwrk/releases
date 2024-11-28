@@ -1,0 +1,6 @@
+{
+  "compiler": ["https://s3.eu-west-1.amazonaws.com/releases.midnight.network/artifacts/compiler/compactc_0.9.2/compactc-linux.zip"],
+  "examples": ["https://s3.amazonaws.com/your-bucket/examples-latest.zip"],
+  "vscode_extension": ["https://s3.amazonaws.com/your-bucket/vscode-extension-latest.zip"],
+  "wallet": ["https://s3.amazonaws.com/your-bucket/wallet-latest.zip"]
+}
