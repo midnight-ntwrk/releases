@@ -1,10 +1,7 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Global styles for the Midnight Releases page.
  */
 
-/* You can override the default Infima variables here. */
 @import url("https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap");
 
 @font-face {
@@ -44,154 +41,136 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "Space Mono";
-  font-weight: normal;
-  font-style: italic;
-  src: url("/fonts/SpaceMono-Italic.ttf");
-  font-display: swap;
-}
+
 :root {
-  /* Typography */
+
   --ifm-heading-font-weight: bold;
   --ifm-font-family-base: "Outfit", sans-serif;
   --ifm-font-family-monospace: "Space Mono", monospace;
 
-  /* --ifm-color-primary: #ffffff; */
-  --ifm-color-primary-dark: #e6e6e6;
-  --ifm-color-primary-darker: #d9d9d9;
-  --ifm-color-primary-darkest: #b3b3b3;
-  --ifm-color-primary-light: #ffffff;
-  --ifm-color-primary-lighter: #ffffff;
-  --ifm-color-primary-lightest: #ffffff;
+
+  --button-border-radius: 0;
+  --button-height: 40px;
+  --button-width: 100px;
+
+
+  --button-linux-background: #000;
+  --button-linux-text: #fff;
+  --button-linux-border: #000;
+  --button-linux-hover: #333;
+
+
+  --button-macos-background: transparent;
+  --button-macos-text: #000;
+  --button-macos-border: #000;
+  --button-macos-hover-text: #333;
+  --button-macos-hover-border: #333;
+
+
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
   --ifm-navbar-sidebar-width: 100vw;
-
-  /* Push Feedback Adjustment to avoid overlap with Osano on Modal */
-
-  --feedback-modal-wrapper-z-index: 2147483638;
-  --feedback-modal-content-z-index: 2147483639;
 }
 
-code {
-  vertical-align: baseline;
-  font-variant-ligatures: none;
-}
-
-pre {
-  font-variant-ligatures: none;
-}
-
-body[data-homepage] {
-  --ifm-link-color: #ffffff;
-  --ifm-color-primary: #ffffff;
-  --ifm-menu-color: #dadde1 !important;
-  --ifm-heading-color: #ffffff;
-  --search-button-background: #d8d8d8;
-  --ifm-menu-color-active: #ffffff;
-  --search-icon: #323232;
-  --button-background: #0000fe;
-  --button-background-hover: #0000c3;
-  --button-background-disabled: #323232;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
-  background-position: calc(100% + 525px), 20%;
-
-  --ifm-navbar-background-color: #0a0a0a;
-}
 
 [data-theme="dark"] {
-  --ifm-link-color: #ffffff;
-  --search-button-background: #d8d8d8;
-  --ifm-menu-color-active: #ffffff;
 
-  --in-docs-link-color: #b3b3b3;
-  --search-icon: #323232;
-  --button-background: #0000fe;
-  --button-background-hover: #0000c3;
-  --button-background-disabled: #323232;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
-  background-repeat: no-repeat;
-  background-size: 1270px;
-  background-position: calc(100% + 525px), 20%;
-  --ifm-navbar-background-color: #0a0a0a;
+  --button-linux-background: #fff;
+  --button-linux-text: #000;
+  --button-linux-border: #fff;
+  --button-linux-hover: #ccc;
+
+  --button-macos-background: transparent;
+  --button-macos-text: #fff;
+  --button-macos-border: #fff;
+  --button-macos-hover-text: #ccc;
+  --button-macos-hover-border: #ccc;
 }
 
-html[data-theme="dark"] {
-  --ifm-color-scheme: dark;
-  --ifm-background-color: #0a0a0a;
-  --docsearch-highlight-color: var(--docsearch-modal-background);
+
+button {
+  all: unset;
+  display: inline-block;
+  width: var(--button-width);
+  height: var(--button-height);
+  text-align: center;
+  line-height: var(--button-height);
+  font-family: inherit;
+  font-size: 14px;
+  border-radius: var(--button-border-radius);
+  border: 1px solid;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
-[data-theme="light"] {
-  --ifm-color-primary: #000000;
-  --ifm-color-primary-dark: #000000;
-  --ifm-color-primary-darker: #000000;
-  --ifm-color-primary-darkest: #000000;
-  --ifm-color-primary-light: #000000;
-  --ifm-color-primary-lighter: #000000;
-  --ifm-color-primary-lightest: #000000;
-  --ifm-menu-color-active: #000000;
 
-  --in-docs-link-color: #0000fe;
-  --search-icon: #323232;
-  --button-background: #0000fe;
-  --button-background-hover: #0000c3;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
-  background-position: calc(100% + 525px), 20%;
+button.linux {
+  background-color: var(--button-linux-background);
+  color: var(--button-linux-text);
+  border-color: var(--button-linux-border);
 }
 
-.private * {
-  --prism-background-color: #322;
+button.linux:hover {
+  background-color: var(--button-linux-hover);
+  color: var(--button-linux-text);
 }
 
-.private > div.theme-code-block {
-  background: #322;
+button.macos {
+  background-color: var(--button-macos-background);
+  color: var(--button-macos-text);
+  border-color: var(--button-macos-border);
 }
 
-.private {
-  --ifm-color-emphasis-300: #644;
+button.macos:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--button-macos-hover-text);
+  border-color: var(--button-macos-hover-border);
+  transition: background-color 0.3s ease, color 0.3s ease, border-width 0.3s ease;
 }
 
-.public * {
-  --prism-background-color: #232;
+
+button:focus {
+  outline: 2px dashed var(--button-linux-border); 
 }
 
-.public > div.theme-code-block {
-  background: #232;
+[data-theme="dark"] button:focus {
+  outline: 2px dashed var(--button-linux-border);
 }
 
-.public {
-  --ifm-color-emphasis-300: #464;
+
+.button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.hidden {
-  display: none !important;
+
+.select-os-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 10px;
 }
+
 
 .navbar__logo img {
   height: auto;
   vertical-align: middle;
 }
 
-.navbar__toggle {
-  position: absolute;
-  top: 50%;
-  right: var(--ifm-global-spacing);
-  transform: translateY(-50%);
-}
-
-.navbar-sidebar {
-  left: unset;
-  right: 0;
-  transform: translate3d(100%, 0, 0);
-  width: 100vw;
+.navbar {
+  padding-left: calc(var(--ifm-navbar-padding-horizontal) + 7px) !important;
+  padding-right: calc(var(--ifm-navbar-padding-horizontal) + 25px) !important;
+  padding-top: calc(var(--ifm-navbar-padding-vertical) + 10px) !important;
+  padding-bottom: calc(var(--ifm-navbar-padding-vertical) + 40px) !important;
+  border-bottom: 1px solid #595959 !important;
 }
 
 .footer {
   background: #0000fe;
   color: #fff;
 }
+
 .footer__title {
   font-family: "DM Mono", monospace;
   font-size: 0.8125rem;
@@ -205,6 +184,7 @@ html[data-theme="dark"] {
   font-size: 1.125rem;
   font-weight: 400;
 }
+
 .footer__link-item:hover {
   color: rgb(196, 193, 193);
 }
@@ -214,131 +194,54 @@ html[data-theme="dark"] {
   line-height: 1.4;
 }
 
-.padding-bottom--lg {
-  min-height: 55rem !important;
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
-@media (max-width: 996px) {
-  .navbar__items--right > :last-child {
-    margin-right: 40px !important;
-  }
+
+.section-button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-family: inherit;
+  background-color: #0000E0;
+  color: #fff;
+  border: 1px solid #0000E0;
+  border-radius: 0;
+  cursor: pointer;
+  height: 44px; 
+  width: 190px; 
+  line-height: 44px; 
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-.navbar__toggle {
-  color: var(--ifm-color-primary);
+
+.section-button:hover {
+  background-color: #005f99; 
+  border-color: #005f99; 
 }
 
-.navbar {
-  padding-left: calc(var(--ifm-navbar-padding-horizontal) + 7px) !important;
-  padding-right: calc(var(--ifm-navbar-padding-horizontal) + 25px) !important;
-  padding-top: calc(var(--ifm-navbar-padding-vertical) + 10px) !important;
-  padding-bottom: calc(var(--ifm-navbar-padding-vertical) + 40px) !important;
 
-  border-bottom: 1px solid #595959 !important;
+.section-button:focus {
+  outline: 2px dashed #007acc;
 }
 
-.row {
-  margin: 0 calc(var(--ifm-spacing-horizontal) * 0) !important;
-  padding-bottom: 120px !important;
+[data-theme="dark"] .section-button {
+  background-color: #0000E0;
+  color: #fff;
+  border: 1px solid #0000E0;
 }
 
-.breadcrumbs {
-  padding-bottom: 25px;
+[data-theme="dark"] .section-button:hover {
+  background-color: #005f99; 
+  border-color: #005f99; 
 }
 
-.markdown p a {
-  color: var(--in-docs-link-color) !important;
-  text-decoration: underline;
-}
-
-.markdown li a {
-  color: var(--in-docs-link-color) !important;
-  text-decoration: underline;
-}
-.markdown table a {
-  color: var(--in-docs-link-color) !important;
-  text-decoration: underline;
-}
-
-.markdown img {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-}
-
-.DocSearch-Button .DocSearch-Search-Icon {
-  color: #323232 !important;
-  height: 15px !important;
-}
-
-.DocSearch-Button {
-  background: #d8d8d8 !important;
-  margin-left: 10px !important;
-  height: 32px !important;
-  width: 32px !important;
-  padding: 0 6px !important;
-}
-
-.DocSearch-Button-Keys {
-  display: none !important;
-}
-
-.DocSearch-Button-Placeholder {
-  display: none;
-}
-[data-theme="dark"] .DocSearch-Prefill,
-[data-theme="dark"] .DocSearch-Hit mark,
-[data-theme="dark"] .DocSearch-LoadingIndicator svg,
-[data-theme="dark"] .DocSearch-MagnifierLabel svg {
-  color: #ffffff !important;
-}
-
-.card {
-  transition: background-color 0.3s ease;
-  padding: "16px";
-  display: "flex";
-  color: "inherit";
-  width: "100%";
-  padding: 1rem;
-  transition: filter 0.3s ease;
-  border: #535353;
-  border-width: 1px;
-  border-style: solid;
-}
-.card:hover {
-  filter: brightness(80%);
-}
-
-/* Adjustments to avoid Push Feedback and Osano overlap with other fixed elements */
-
-.osano-cm-window__widget {
-  bottom: 55px;
-}
-
-.theme-back-to-top-button {
-  right: auto !important;
-  left: 1.3rem;
-}
-
-.navbar--fixed-top .theme-doc-sidebar-menu {
-  padding-bottom: 100px;
-}
-
-/* The following table is specific to the Compact reference document */
-.lang-ref-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  --ifm-table-stripe-background: none;
-  border: 1px solid; /* Add border to the table */
-}
-
-.lang-ref-table td,
-.lang-ref-table th {
-  border: none;
-  padding:1px;
-  text-align: left;
-}
-
-.lang-ref-table td:nth-child(2) {
-  text-align: right; /* Right-align the middle column */
-}
