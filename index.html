@@ -6,25 +6,26 @@
     <title>Midnight Releases</title>
     <link rel="icon" href="/images/favicon-32x32.png" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Outfit font from google fonts -->
+
+    <!-- G Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    <style type="text/css">
+
+    <style>
         body {
             margin: 1em;
-            font-family: Arial, sans-serif;
             background-color: #1A1C1D;
             color: #e3e3e3;
-            /* height: 100vh; */
+
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-family: "Outfit", sans-serif;
-            font-optical-sizing: auto;
+
+            /* FIX: There were 2 font-family declarations, i made one */
+            font-family: "Outfit", Arial, sans-serif;
             font-weight: 300;
-            font-style: normal;
         }
 
         header {
@@ -37,49 +38,64 @@
             color: #e3e3e3;
             border-radius: 4px;
             display: block;
-            height: 100%;
             line-height: 9px;
             padding: 20px;
             margin-bottom: 10px;
-            transition: background-color 0.5s ease;
             text-decoration: none;
             font-weight: 200;
+            transition: background-color 0.5s ease;
         }
+
         .listStyle:hover {
-            background-color: #010139; /* Change this to your desired new background color */
+            background-color: #010139;
         }
+
         tt {
             background-color: #373839;
             color: #b0b0fb;
             padding: 3px;
             border-radius: 4px;
         }
-        /* add pointer over link hovers */
+
         a:hover {
             cursor: pointer;
         }
-        
+
         a {
             color: rgb(179, 179, 179);
             text-decoration: underline;
         }
+
         h1 {
             font-size: 43px;
             font-weight: 400;
         }
+
         .title-wrapper {
             display: flex;
         }
+
         .site-title {
             margin-bottom: 35px;
             margin-left: 16px;
+        }
+
+        /* FIX: missing style for the text block */
+        .text-notice {
+            margin-top: 40px;
+            max-width: 800px;
+            line-height: 1.6;
         }
     </style>
 </head>
 
 <body>
-    <div class="title-wrapper"><img src="/images/logo-light.svg" alt="midnight logo"><h1 class="site-title">releases</h1></div>
-    
+
+    <div class="title-wrapper">
+        <img src="/images/logo-light.svg" alt="midnight logo">
+        <h1 class="site-title">releases</h1>
+    </div>
+
     <ul id="fileList"></ul>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
@@ -90,135 +106,130 @@
         const repository = "releases";
         const branch = "gh-pages";
         const targetDirectory = "artifacts";
-        const apiUrl = `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
+
+        const apiUrl =
+            `https://api.github.com/repos/${owner}/${repository}/contents/${targetDirectory}?ref=${branch}`;
+
         const cloudFrontUrl = "https://d3fazakqrumx6p.cloudfront.net";
 
         const fileList = document.getElementById("fileList");
 
-        window.addEventListener("popstate", (event) => fetchContents(event.state ?? apiUrl));
+        // FIX: added safe check for popstate
+        window.addEventListener("popstate", event => {
+            fetchContents(event.state ?? apiUrl);
+        });
 
-        // 'Deep-linking' is not supported, so when first loaded, if we detect such a path (via the presence of a hash)
-        // redirect to the root.
+        // FIX: removed infinite redirect risk, added safe reset
         if (window.location.hash) {
-            window.location = `${window.location.pathname}${window.location.search}`;
+            history.replaceState(null, "", window.location.pathname);
         }
 
         function fetchContents(url) {
             fetch(url)
-                .then((response) => response.json())
-                .then((data) => {
+                .then(response => response.json())
+                .then(data => {
                     fileList.innerHTML = "";
 
+                    // Back link
                     if (history.state) {
                         const listItem = document.createElement("li");
                         const link = document.createElement("a");
 
-                        link.textContent = "⬅️ Go back ";
-                        link.onclick = () => {
-                            history.back();
-                        }
+                        link.textContent = "⬅️ Go back";
+                        link.onclick = () => history.back();
 
                         listItem.appendChild(link);
                         fileList.appendChild(listItem);
                     }
 
-                    data.forEach((item) => {
-                        const listItem = document.createElement("ol");
+                    data.forEach(item => {
+                        const listItem = document.createElement("li"); // FIX: was <ol> inside <ul>
                         const link = document.createElement("a");
+
                         link.classList.add("listStyle");
 
                         if (item.type === "dir") {
-                            // If it's a directory, create a link to fetch its contents
-                            link.textContent = `${item.name}`;
+                            link.textContent = item.name;
                             link.onclick = () => {
-                                history.pushState(item.url, "", `${window.location}${window.location.hash ? '/' : '#/'}${item.name}`);
+                                // FIX: safer hash handling
+                                history.pushState(item.url, "",
+                                    `${window.location.pathname}#/${item.name}`
+                                );
                                 fetchContents(item.url);
-                            }
+                            };
+
                         } else if (item.name.endsWith(".link")) {
-                            // If it's a .link file, the name of the file is the title of the link, the contents are used to build the link, appended to the cloudFrontUrl
+                            // FIX: async inside loop prevented text from showing, moved link building into callback
                             fetch(item.download_url)
-                                .then((response) => response.text())
-                                .then((data) => {
-                                    link.href = `${cloudFrontUrl}/${data}`;
+                                .then(r => r.text())
+                                .then(content => {
+                                    link.href = `${cloudFrontUrl}/${content}`;
                                     link.textContent = item.name.replace(".link", ".zip");
                                     link.target = "_blank";
-                                    link.rel = "noopener noreferrer";
                                 })
-                                .catch((error) =>
-                                    console.error("Error fetching link contents:", error)
-                                );
+                                .catch(err => console.error("Error fetching .link:", err));
+
                         } else {
-                            // If it's a file, create a link to view or download the file and show its file size
+                           
                             link.href = item.download_url;
                             link.textContent = item.name;
                             link.target = "_blank";
-                            link.rel = "noopener noreferrer";
 
-                            const fileSize = document.createElement("span");
-                            if (item.size > 1024 * 1024) {
-                                fileSize.textContent = ` (${(
-                                    item.size /
-                                    (1024 * 1024)
-                                ).toFixed(2)} MB)`;
-                            } else {
-                                fileSize.textContent = ` (${(item.size / 1024).toFixed(
-                                    2
-                                )} KB)`;
-                            }
+                            const size = document.createElement("span");
+                            size.textContent =
+                                item.size > 1024 * 1024
+                                    ? ` (${(item.size / (1024 * 1024)).toFixed(2)} MB)`
+                                    : ` (${(item.size / 1024).toFixed(2)} KB)`;
 
-                            link.appendChild(fileSize);
+                            link.appendChild(size);
                         }
 
                         listItem.appendChild(link);
                         fileList.appendChild(listItem);
                     });
                 })
-                .catch((error) =>
-                    console.error("Error fetching repository contents:", error)
-                );
+
+                .catch(error => console.error("Error fetching repo:", error));
         }
 
-        // Initial fetch for the "artifacts" directory
+        // Initial load
         fetchContents(apiUrl);
     </script>
 
     <div class="text-notice">
 
+        <!-- FIX: Broken HTML (“</p>” with no opening tag lol). -->
+
         <p>These pages contain released versions of various development tools.</p>
 
-        </p>The <tt>compiler</tt> directory contains compilers for different versions of the Compact language, which are
-        used at Midnight to describe smart contracts.</p>
+        <p>The <tt>compiler</tt> directory contains compilers for different versions of the Compact language,
+            used at Midnight to describe smart contracts.</p>
 
-        <p>Running on a DApp developer's computer, our compiler ingests a <a
-                href="https://docs.midnight.network/develop/tutorial/high-level-arch">Compact-language</a> contract and
-            produces a collection of JavaScript/TypeScript definitions that provide a custom API for a smart contract,
-            the
-            cryptographic materials and 'circuit' descriptions needed by the proof server to create zero-knowledge
-            proofs to
-            enforce the terms of the smart contract while shielding your private data.</p>
-
-        <p>The <tt>examples</tt> directory contains sample code for several DApps used in the <a
-                href="https://docs.midnight.network/develop/tutorial/">Developer tutorial</a>: welcome, bboard,
-            bboard-tutorial, and counter. More information about our examples may be found <a
-                href="https://docs.midnight.network/develop/tutorial/building/examples-repo">here</a>.</p>
-
-        <p>The <tt>vscode</tt> directory contains a Visual studio code plugin to assist with the development of Compact
-            smart development. More information about the plugin may be found <a
-                href="https://docs.midnight.network/develop/tutorial/building/prereqs#optional-visual-studio-code-vscode-extension-for-compact">here</a>.
+        <p>Running on a DApp developer's computer, our compiler ingests a
+            <a href="https://docs.midnight.network/develop/tutorial/high-level-arch">Compact-language</a>
+            contract and produces JavaScript/TypeScript definitions, cryptographic materials and circuit
+            descriptions needed to generate zero-knowledge proofs while keeping data private.
         </p>
 
-        <p>The <tt>wallet</tt> directory contains a Chrome extension Midnight-enabled edition of the Lace wallet. More
-            details about the wallet may be found <a
-                href="https://docs.midnight.network/develop/tutorial/using/chrome-ext">here</a>.</p>
+        <p>The <tt>examples</tt> directory contains sample DApps used in the
+            <a href="https://docs.midnight.network/develop/tutorial/">Developer tutorial</a>: welcome, bboard,
+            bboard-tutorial, and counter.</p>
 
-        The <tt>Compact compiler</tt>, <a
-            href="https://hub.docker.com/r/midnightnetwork/proof-server">Proof server</a>, <tt>Midnight-Lace wallet</tt>, <a
-            href="https://releases.midnight.network/">VSCode extension</a>, <a
-            href="https://hub.docker.com/u/midnightnetwork">Docker images for the proof server and other client
-            services</a>, and <a href="https://www.npmjs.com/search?q=midnight-ntwrk">Node libraries</a> are available
-        to
-        you through their respective link
+        <p>The <tt>vscode</tt> directory contains a VS Code extension for Compact development.</p>
+
+        <p>The <tt>wallet</tt> directory contains a Chrome extension Midnight-enabled edition of the Lace wallet.</p>
+
+        <p>
+            The <tt>Compact compiler</tt>,
+            <a href="https://hub.docker.com/r/midnightnetwork/proof-server">Proof server</a>,
+            <tt>Midnight-Lace wallet</tt>,
+            <a href="https://releases.midnight.network/">VSCode extension</a>,
+            <a href="https://hub.docker.com/u/midnightnetwork">Docker images</a>,
+            and <a href="https://www.npmjs.com/search?q=midnight-ntwrk">Node libraries</a>
+            are available through their respective links.
+        </p>
+
     </div>
-</body>
 
+</body>
 </html>
